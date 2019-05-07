@@ -1,0 +1,58 @@
+{
+	"data":[
+		{
+			"time":"2019-04-17 08:06:55",
+			"name":"济南张先生",
+			"money":"8000",
+			"ispay":"已支付",
+			"isdeliver":"已发货",
+			"deliverno":"123456789,456789455",
+			"detail":[
+				{
+					"name":"足托",
+					"model":"ZT-1",
+					"attr":"成品",
+					"count":"10",
+					"delivered":"2",
+					"mess":"加高,加深"
+				},
+				{
+					"name":"护腰",
+					"model":"HY-2",
+					"attr":"定制",
+					"count":"2",
+					"delivered":"2",
+					"mess":""
+				}
+			]
+		
+		},
+		{
+			"time":"2019-04-18 13:00:00",
+			"name":"新疆王先生",
+			"money":"8000",
+			"ispay":"已支付",
+			"isdeliver":"部分发货",
+			"deliverno":"123456789,456789455",
+			"detail":[
+				{
+					"name":"足托",
+					"model":"ZT-1",
+					"attr":"成品",
+					"count":"10",
+					"delivered":"2",
+					"mess":"加高,加深"
+				},
+				{
+					"name":"护腰",
+					"model":"HY-2",
+					"attr":"定制",
+					"count":"2",
+					"delivered":"2",
+					"mess":""
+				}
+			]
+		
+		}
+	]
+}

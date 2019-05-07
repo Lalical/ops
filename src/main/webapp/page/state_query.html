@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title data-id="state_query">状态查询</title>
+		<!--<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+		<link rel="stylesheet" href="../lib/element/css/index.css">
+		<link rel="stylesheet" href="../lib/layui-v2.4.5/layui/css/layui.css">
+		<link rel="stylesheet" href="../css/sales_order.css">
+		<style type="text/css">
+			#app {
+				padding: 30px;
+				min-height: 800px;
+				min-width: 1000px;
+			}
+
+			.el-row--flex {
+				align-items: center;
+			}
+
+			.card {
+				border: 1px solid #ebebeb;
+				border-radius: 3px;
+				transition: .2s;
+				padding: 24px;
+				margin-top: 20px;
+			}
+
+			.detail-content {
+				padding: 10px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				max-height: 156px;
+				overflow-y: auto;
+			}
+
+			.detail-content li {}
+
+			[v-cloak] {
+				display: none;
+			}
+		.el-button--primary {
+	    color: #fff;
+	    background-color: #009688;
+	    border-color:#009688;
+	}
+	.el-button--primary:focus, .el-button--primary:hover {
+			opacity: .8;
+			filter: alpha(opacity=80);
+			color: #fff;
+			background-color: #009688;
+			border-color:#009688;
+	}
+		</style>
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo">
+					<h3>订单管理系统</h3>
+				</div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<div class="layui-side layui-bg-black">
+					<div class="layui-side-scroll">
+						<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+						<ul class="layui-nav layui-nav-tree" lay-filter="test" id="pageConainer">
+						</ul>
+					</div>
+				</div>
+
+				<div class="layui-body container">
+					<div id="app" v-cloak>
+						<div class="container">
+							<el-row type="flex" class="row-bg" justify="start">
+								<el-col :span="7">
+									<div class="grid-content bg-purple">
+										<div class="block">
+											<span class="demonstration">开始时间</span>
+											<el-date-picker v-model="date1" type="datetime" placeholder="选择日期时间" default-time="00:00:00" size="small">
+											</el-date-picker>
+										</div>
+									</div>
+								</el-col>
+								<el-col :span="7">
+									<div class="grid-content bg-purple">
+										<div class="block">
+											<span class="demonstration">结束时间</span>
+											<el-date-picker v-model="date2" type="datetime" placeholder="选择日期时间" default-time="00:00:00" size="small">
+											</el-date-picker>
+										</div>
+									</div>
+								</el-col>
+								<el-col :span="6">
+									<div class="grid-content bg-purple">
+										<div class="block">
+											<span class="demonstration">客户姓名</span>
+												<el-input v-model="cname" style="width: 180px;" size="small"></el-input>
+										</div>
+									</div>
+								</el-col>
+								<el-col :span="2">
+									<div class="grid-content bg-purple">
+										<el-button type="button" class="el-button el-button--primary" size="small" @click="search()">查询</el-button>
+									</div>
+								</el-col>
+								<el-col :span="2">
+									<div class="grid-content bg-purple">
+										<el-button type="button" class="el-button el-button--primary" size="small" @click="qiucksearch()">显示关键单</el-button>
+									</div>
+								</el-col>
+							</el-row>
+							<el-row class="card">
+								<template>
+									<el-table :data="tableData.slice((page.currpage - 1) * page.pagesize, page.currpage * page.pagesize)"
+									 style="width: 100%">
+										<el-table-column label="时间" prop="time">
+										</el-table-column>
+										<el-table-column label="客户名" prop="customername">
+										</el-table-column>
+										<el-table-column label="金额" prop="money">
+										</el-table-column>
+										<el-table-column label="是否支付" prop="ispay">
+											<template slot-scope="scope" prop="ispay">
+												<el-button size="mini" type="danger" v-if='scope.row.ispay==="未支付"'>未支付</el-button>
+												<el-button size="mini" type="success" v-if='scope.row.ispay==="已支付"'>已支付</el-button>
+											</template>
+										</el-table-column>
+										<el-table-column align="right">
+											<template slot-scope="scope" prop="ispay">
+												<el-button size="mini" @click="handleEdit(scope.$index, scope.row)">订单详情</el-button>
+											</template>
+										</el-table-column>
+									</el-table>
+								</template>
+							</el-row>
+							<el-row>
+								<el-dialog title="订单详情" :visible.sync="dialogFormVisible" center width="40%" :modal-append-to-body='false'
+								 :modal="false" top="22vh">
+									<template>
+										<el-table :data="details_tableData"
+										 style="width: 100%">
+												 <el-table-column label="产品" prop="name">
+												 </el-table-column>
+												 <el-table-column label="型号" prop="model">
+												 </el-table-column>
+												 <el-table-column label="配送情况">
+													<template scope="scope">
+														<p>{{scope.row.delivered}}/{{scope.row.count}}</p>
+													</template>
+												 </el-table-column>
+										</el-table>
+									</template>
+									<div style="margin:10px"><span>单号：</span>{{express}}</div>
+									<div slot="footer" class="dialog-footer">
+										<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+									</div>
+								</el-dialog>
+							</el-row>
+							<div class="block" style="margin-top: 20px;">
+								<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+											   :page-sizes="[10,15]"  layout="total, sizes, prev, pager, next, jumper" :total="tableData.length">
+								</el-pagination>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../js/page.js"></script>
+	<script src="../js/vue.js"></script>
+	<script src="../js/axios.min.js"></script>
+	<script src="../js/elementui.js"></script>
+	<script>
+        // var host="http://www.senderkong.com:8080/ops";
+        var host="http://127.0.0.1:8080";
+		new Vue({
+			el: '#app',
+			data: function() {
+				return {
+                    page:{
+                        "pagesize":10,
+                        "currpage":1
+					},
+						pickerOptions: {
+						shortcuts: [{
+							text: '今天',
+							onClick(picker) {
+								picker.$emit('pick', new Date());
+							}
+						}, {
+							text: '昨天',
+							onClick(picker) {
+								const date = new Date();
+								date.setTime(date.getTime() - 3600 * 1000 * 24);
+								picker.$emit('pick', date);
+							}
+						}, {
+							text: '一周前',
+							onClick(picker) {
+								const date = new Date();
+								date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+								picker.$emit('pick', date);
+							}
+						}]
+					},
+					cname:"",
+					tableData: [],
+					orderSearch: '',
+                    express:"",
+					date1: '',
+					date2: '',
+					details_tableData:null,
+					dialogTableVisible: false,
+					dialogFormVisible: false,
+					modal: false,
+					formLabelWidth: '90px'
+				}
+			},
+			computed: {
+
+			},
+			methods: {
+				onSubmit() {
+					console.log('submit!');
+				},
+                handleSizeChange(val) {
+                    this.page.pagesize = val;
+                },
+                handleCurrentChange(val) {
+                    this.page.currpage = val;
+                },
+				search() {
+                    let that = this;
+					if (this.date1 && this.date2) {
+						let startTime = that.date1.getTime();
+						let endTime = that.date2.getTime();
+                        let cname = that.cname;
+                        var key = localStorage.getItem("key");
+						axios({
+							method: 'post',
+							url: host+'/order/search',
+							data: {
+								starttime: startTime,
+								endtime: endTime,
+								name:cname
+							},
+                            headers: {
+                                'key': key,
+                                "Content-Type": "application/json"
+                            }
+						}).then(function(response) {
+							console.log(response)
+							that.tableData = response.data.data;
+                            if(that.tableData.length==0)
+                            {
+                                that.dataEmptyTips()
+                            }
+						}).catch(function(error) {
+							console.log(error);
+						});
+					}else {
+                        that.noCondition()
+					}
+				},
+                qiucksearch(){
+                        let that = this;
+                        let cname = that.cname;
+                        var key = localStorage.getItem("key");
+                        axios({
+                            method: 'get',
+                            url: host+'/order/quicksearch',
+                            headers: {
+                                'key': key,
+                                "Content-Type": "application/json"
+                            }
+                        }).then(function(response) {
+                            console.log(response)
+                            that.tableData = response.data.data;
+                            if(that.tableData.length==0)
+                            {
+                                that.dataEmptyTips()
+                            }
+                        }).catch(function(error) {
+                            console.log(error);
+                        });
+				},
+				handleEdit(index, row) {
+					this.dialogFormVisible = true;
+					console.log(row);
+					this.express= row.deliverno;
+					this.details_tableData = row.detail;
+					
+				},
+				handleDelete(index, row) {
+					console.log(index, row);
+				},
+                noCondition() {
+                    this.$message({
+                        message: '条件不足',
+                        type: 'info'
+                    });
+                },
+                dataEmptyTips() {
+                    this.$message({
+                        message: '暂无数据',
+                        type: 'info'
+                    });
+                }
+			}
+		})
+	</script>
+</html>

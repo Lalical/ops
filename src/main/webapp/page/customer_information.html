@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title data-id="customer_information">客户信息录入</title>
+		<link rel="stylesheet" href="../lib/element/css/index.css">
+		<!--<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+		<link rel="stylesheet" href="../lib/layui-v2.4.5/layui/css/layui.css">
+		<link rel="stylesheet" href="../css/sales_order.css">
+		<style type="text/css">
+			#customerInfo .inner {
+				padding: 24px;
+			}
+
+			.customer-info-list {
+				padding: 24px;
+			}
+			.el-button--primary {
+			    color: #fff;
+			    background-color: #009688;
+			    border-color:#009688;
+			}
+			.el-button--primary:focus, .el-button--primary:hover {
+				background-color: #009688;
+				border-color:#009688;
+				opacity: .8;
+				filter: alpha(opacity=80);
+				color: #fff
+			}
+		</style>
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo">
+					<h3>订单管理系统</h3>
+				</div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<div class="layui-side layui-bg-black">
+					<div class="layui-side-scroll">
+						<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+						<ul class="layui-nav layui-nav-tree" lay-filter="test" id="pageConainer">
+						</ul>
+					</div>
+				</div>
+
+				<div class="layui-body container">
+					<!-- 内容主体区域 -->
+					<div id="customerInfo">
+						<div class="inner">
+							<el-row type="flex" class="row-bg" justify="start">
+								<el-col :span="8">
+									<el-button type="button" class="el-button el-button--primary" size="small" @click="addCustomer()">添加客户</el-button>
+								</el-col>
+							</el-row>
+							<el-row class="customer-info-list">
+								<template>
+									<el-table :data="tableData" style="width: 100%" border>
+										<el-table-column prop="name" label="名称" width="180">
+										</el-table-column>
+										<!--<el-table-column prop="phone" label="电话" width="180">-->
+										<!--</el-table-column>-->
+										<el-table-column prop="address" label="地址">
+										</el-table-column>
+									</el-table>
+								</template>
+							</el-row>
+							<el-dialog title="客户信息录入" :visible.sync="dialogFormVisible" center width="40%" :modal-append-to-body='false'
+							 :modal="false" top="22vh">
+								<el-form label-width="80px" :model="formLabelAlign">
+									<el-form-item label="名称">
+										<el-input v-model="formLabelAlign.name"></el-input>
+									</el-form-item>
+									<el-form-item label="电话">
+										<el-input v-model="formLabelAlign.phone"></el-input>
+									</el-form-item>
+									<el-form-item label="地址">
+										<el-input v-model="formLabelAlign.address"></el-input>
+									</el-form-item>
+									<el-form-item>
+										<el-button type="primary" @click="onSubmit()">确认添加</el-button>
+										<el-button @click="cancel()">取消</el-button>
+									</el-form-item>
+								</el-form>
+							</el-dialog>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<script type="text/javascript" src="../js/page.js"></script>
+			<script src="../js/vue.js"></script>
+			<script src="../js/axios.min.js"></script>
+			<script src="../js/elementui.js"></script>
+			<script type="text/javascript">
+				// var host="http://www.senderkong.com:8080/ops";
+                var host="http://127.0.0.1:8080";
+				new Vue({
+					el: "#customerInfo",
+					data: function() {
+						return {
+							formLabelAlign: {
+								name: '',
+								phone: '',
+								address: ''
+							},
+							dialogTableVisible: false,
+							dialogFormVisible: false,
+							tableData: []
+						}
+					},
+					created: function() {
+						/*
+							用途：列出所有客户的信息
+							类型：GET
+							url：/customer/detail
+							返回体：
+							{
+								"data":[
+									{
+										"name":"西安刘",
+										"address":"西安市长安区xxx",
+									},
+									{
+										"name":"北京王",
+										"address":"北京市xxx",
+									}
+								]
+							}
+						 */
+						var that = this;
+						axios.get(host+'/customer/detail', {}).then(function(response) {
+								console.log(response)
+								that.tableData = response.data.data;
+							})
+							.catch(function(error) {
+								console.log(error);
+							});
+					},
+					methods: {
+						addCustomer: function() {
+							this.dialogFormVisible = true;
+						},
+						successTips() {
+							this.$message({
+							  message: '保存成功',
+							  type: 'success'
+							});
+						  },
+						onSubmit() {
+							/*
+								录入客户信息
+								类型：POST
+								url：/customer/input
+								请求体：
+								{
+									"name":"小明",
+									"phone":"13585698547",
+									"address":"火星第二个坑左拐"
+								}
+								返回体：
+								{
+									"data":"录入成功"
+								}
+
+							 */
+							var that = this;
+							var request = {
+								name: this.formLabelAlign.name,
+								phone: this.formLabelAlign.phone,
+								address: this.formLabelAlign.address
+							}
+							var key = localStorage.getItem("key");
+
+                            axios({
+                                method: 'post',
+                                url: host+'/customer/input',
+                                data:JSON.stringify(request),
+                                headers: {
+                                    'key': key,
+                                    "Content-Type": "application/json"
+                                }
+                            }).then(function(response) {
+                                console.log(response)
+                                if (response.data.data== "录入成功") {
+                                     that.formLabelAlign.name='';
+                                         that.formLabelAlign.phone='';
+                                         that.formLabelAlign.address='';
+                                    that.tableData.push(request);
+                                    that.dialogFormVisible = false;
+                                    that.successTips();
+                                }
+                            }).catch(function(error) {
+                                console.log(error);
+                            });
+						},
+						cancel() {
+							this.dialogFormVisible = false;
+						}
+					}
+				})
+			</script>
+	</body>
+</html>

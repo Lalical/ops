@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title data-id="distribution_renewal">销售清单</title>
+		<!--<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+		<link rel="stylesheet" href="../lib/element/css/index.css">
+		<link rel="stylesheet" href="../lib/layui-v2.4.5/layui/css/layui.css">
+		<link rel="stylesheet" href="../css/sales_order.css">
+		<style type="text/css">
+			#app {
+				padding: 30px;
+				min-height: 800px;
+				min-width: 1000px;
+			}
+
+			.el-row--flex {
+				align-items: center;
+			}
+
+			.card {
+				border: 1px solid #ebebeb;
+				border-radius: 3px;
+				transition: .2s;
+				padding: 24px;
+				margin-top: 20px;
+			}
+
+			.detail-content {
+				padding: 10px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				max-height: 156px;
+				overflow-y: auto;
+			}
+
+			.detail-content li {}
+
+			[v-cloak] {
+				display: none;
+			}
+
+			.el-button--primary {
+				color: #fff;
+				background-color: #009688;
+				border-color: #009688;
+			}
+
+			.el-button--primary:focus,
+			.el-button--primary:hover {
+				opacity: .8;
+				filter: alpha(opacity=80);
+				color: #fff;
+				background-color: #009688;
+				border-color: #009688;
+			}
+
+			.el-button--primary.is-disabled,
+			.el-button--primary.is-disabled:active,
+			.el-button--primary.is-disabled:focus,
+			.el-button--primary.is-disabled:hover {
+				color: #FFF;
+				background-color: rgba(0, 150, 136, 0.45);
+				border-color: rgba(0, 150, 136, 0.45);
+			}
+		</style>
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo">
+					<h3>订单管理系统</h3>
+				</div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<div class="layui-side layui-bg-black">
+					<div class="layui-side-scroll">
+						<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+						<ul class="layui-nav layui-nav-tree" lay-filter="test" id="pageConainer">
+						</ul>
+					</div>
+				</div>
+
+				<div class="layui-body container">
+					<div id="app" v-cloak>
+						<div class="container">
+							<el-row type="flex" class="row-bg" justify="start">
+								<el-col :span="8">
+									<div class="grid-content bg-purple">
+										<div class="block">
+											<span class="demonstration">开始时间</span>
+											<el-date-picker v-model="date1" type="datetime" placeholder="选择日期时间" default-time="12:00:00" size="small">
+											</el-date-picker>
+										</div>
+									</div>
+								</el-col>
+								<el-col :span="8">
+									<div class="grid-content bg-purple">
+										<div class="block">
+											<span class="demonstration">结束时间</span>
+											<el-date-picker v-model="date2" type="datetime" placeholder="选择日期时间" default-time="12:00:00" size="small">
+											</el-date-picker>
+										</div>
+									</div>
+								</el-col>
+								<el-col :span="2">
+									<div class="grid-content bg-purple">
+										<el-button type="button" class="el-button el-button--primary" size="small" @click="search()">查询</el-button>
+									</div>
+								</el-col>
+								<el-col :span="2">
+									<div class="grid-content bg-purple">
+										<el-button type="button" class="el-button el-button--primary" size="small" @click="searchbytime()">显示所有未配送完</el-button>
+									</div>
+								</el-col>
+							</el-row>
+							<el-row class="card">
+								<template>
+									<el-table :data="tableData.filter(data => !orderSearch || data.customername.toLowerCase().includes(orderSearch.toLowerCase()))"
+									 style="width: 100%" v-loading="loading">
+										<el-table-column label="时间" prop="time">
+										</el-table-column>
+										<el-table-column label="客户名" prop="customername">
+										</el-table-column>
+										<el-table-column align="right">
+											<template slot="header" slot-scope="scope">
+												<el-input v-model="orderSearch" size="mini" placeholder="输入关键字搜索" />
+											</template>
+											<template slot-scope="scope" prop="ispay">
+												<!-- <el-button size="mini" >订单详情</el-button> -->
+												<el-button size="mini" type="success" @click="handleEdit(scope.$index, scope.row)">配送</el-button>
+											</template>
+										</el-table-column>
+									</el-table>
+								</template>
+							</el-row>
+							<el-row>
+								<el-dialog title="订单详情" :visible.sync="dialogFormVisible" center width="50%" :modal-append-to-body='false'
+								 :modal="false" top="22vh">
+									<el-table :data="currentDetail" style="width: 100%">
+										<el-table-column label="名称">
+											<template scope="scope">
+												<p>{{ scope.row.name }}</p>
+											</template>
+										</el-table-column>
+										<el-table-column label="型号">
+											<template scope="scope">
+												<p>{{ scope.row.model}}</p>
+											</template>
+										</el-table-column>
+										<el-table-column label="备注信息">
+											<template scope="scope">
+												<p v-if="scope.row.mess ==''">无</p>
+												<p>{{ scope.row.mess}}</p>
+											</template>
+										</el-table-column>
+										<el-table-column label="状态">
+											<template scope="scope">
+												<p>{{scope.row.delivered}}/{{scope.row.count}} <span>还需{{scope.row.todeliver}}</span></p>
+											</template>
+										</el-table-column>
+										<el-table-column label="配送数量" width="120px">
+											<template scope="scope">
+												<el-input placeholder="" v-model="scope.row.deliveryQuantity" type="number" min=0>
+												</el-input>
+											</template>
+										</el-table-column>
+									</el-table>
+									<el-form ref="form" :model="disformInline" class="inline" style="margin-top: 20px;" label-width="80px">
+										<el-form-item label="客户名">
+											<el-input v-model="disformInline.customername" value="disformInline.customername" placeholder="客户名"></el-input>
+										</el-form-item>
+										<el-form-item label="电话">
+											<el-input v-model="disformInline.phone" value="disformInline.phone" placeholder="电话"></el-input>
+										</el-form-item>
+										<el-form-item label="快递单号">
+											<el-input v-model="disformInline.express" placeholder="快递单号"></el-input>
+										</el-form-item>
+									</el-form>
+									<div slot="footer" class="dialog-footer">
+										<el-button type="primary" :disabled="flag" @click="ensure()">确认配送</el-button>
+										<el-button type="primary" @click="PrintDistributionSheet()">打印配送单</el-button>
+										<el-button type="" @click="dialogFormVisible = false">取消</el-button>
+									</div>
+								</el-dialog>
+							</el-row>
+							<div class="block" style="margin-top: 20px;">
+								<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+											   :page-sizes="[1,10,15]"  layout="total, sizes, prev, pager, next, jumper" :total="tableData.length">
+								</el-pagination>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../js/page.js"></script>
+	<script src="../js/vue.js"></script>
+	<script src="../js/axios.min.js"></script>
+	<script src="../js/elementui.js"></script>
+	<script>
+        // var host="http://www.senderkong.com:8080/ops";
+        var host="http://127.0.0.1:8080";
+		new Vue({
+			el: '#app',
+			data: function() {
+				return {
+                    page:{
+                        "pagesize":10,
+                        "currpage":1
+                    },
+					disformInline: {
+                        customername: "",
+						phone: "",
+						express: ""
+					},
+					pickerOptions: {
+						shortcuts: [{
+							text: '今天',
+							onClick(picker) {
+								picker.$emit('pick', new Date());
+							}
+						}, {
+							text: '昨天',
+							onClick(picker) {
+								const date = new Date();
+								date.setTime(date.getTime() - 3600 * 1000 * 24);
+								picker.$emit('pick', date);
+							}
+						}, {
+							text: '一周前',
+							onClick(picker) {
+								const date = new Date();
+								date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+								picker.$emit('pick', date);
+							}
+						}]
+					},
+					tableData: [],
+					orderSearch: '',
+					date1: '',
+					date2: '',
+					form: {
+						name: '',
+						time: '',
+						datail: []
+					},
+					details_tableData: [],
+					dialogTableVisible: false,
+					dialogFormVisible: false,
+					payType: false,
+					payStyle: null,
+					modal: false,
+					formLabelWidth: '90px',
+					current: null,
+					currentDetail: null,
+					loading: false,
+					print: {},
+					flag: true
+				}
+			},
+			computed: {
+
+			},
+			methods: {
+				onSubmit() {
+					console.log('submit!');
+				},
+                handleSizeChange(val) {
+                    this.page.pagesize = val;
+                },
+                handleCurrentChange(val) {
+                    this.page.currpage = val;
+                },
+				search() {
+					if (this.date1 && this.date2) {
+						let that = this;
+						let startTime = that.date1.getTime();
+						let endTime = that.date2.getTime();
+                        var key = localStorage.getItem("key");
+						axios({
+							method: 'post',
+							url: host+'/deliver/searchbytime',
+							data: {
+								starttime: startTime,
+								endtime: endTime
+							},
+                            headers: {
+                                'key': key,
+                                "Content-Type": "application/json"
+                            }
+						}).then(function(response) {
+							if (response) {
+								that.tableData = response.data.data;
+                                if(that.tableData.length==0)
+                                {
+                                    that.dataEmptyTips()
+                                }
+							}
+						}).catch(function(error) {
+							console.log(error);
+						});
+					}
+				},
+				searchbytime() {
+						let that = this;
+                        var key = localStorage.getItem("key");
+						axios({
+							method: 'get',
+							url: host+'/deliver/quicksearch',
+                            headers: {
+                                'key': key,
+                                "Content-Type": "application/json"
+                            }
+						}).then(function(response) {
+							if (response) {
+								that.tableData = response.data.data;
+                                if(that.tableData.length==0)
+                                {
+                                    that.dataEmptyTips()
+                                }
+							}
+						}).catch(function(error) {
+							console.log(error);
+						});
+				},
+				successTips() {
+					this.$message({
+						message: '记录成功',
+						type: 'success'
+					});
+				},
+                dataEmptyTips() {
+                    this.$message({
+                        message: '暂无数据',
+                        type: 'info'
+                    });
+                },
+				handleEdit(index, row) {
+					this.dialogFormVisible = true;
+					this.current = row;
+					this.currentDetail = row.detail;
+					console.log(this.currentDetail);
+					this.disformInline.customername = row.customername;
+					this.disformInline.phone = row.phone;
+                    this.disformInline.express = row.express;
+				},
+				PrintDistributionSheet() {
+					var that = this
+					this.print.id = this.current.id;
+					this.print.customername = this.disformInline.customername;
+					this.print.time = this.getLocalTime(new Date());
+					this.print.detail = [];
+					this.currentDetail.forEach(function(ele, index) {
+						let obj = {
+							'name': ele.name,
+							"model": ele.model,
+							"deliveryQuantity": ele.deliveryQuantity,
+							"mess":ele.mess
+						};
+						if(ele.deliveryQuantity){
+                            that.print.detail.push(obj);
+						}
+					})
+					console.log(this.print)
+					var printArr = [];
+					printArr[0] = this.print;
+					localStorage.setItem("printOrder", JSON.stringify(printArr));
+					this.flag = false;
+					window.open(host+"/page/tabel.html", "_blank");
+				},
+				getLocalTime(timestamp) {
+					function add0(m) {
+						return m < 10 ? '0' + m : m
+					}
+					var time = new Date(timestamp);
+					var y = time.getFullYear();
+					var m = time.getMonth() + 1;
+					var d = time.getDate();
+					var h = time.getHours();
+					var mm = time.getMinutes();
+					var s = time.getSeconds();
+					return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s);
+				},
+				ensure() {
+					let deliverParams = {
+						id: this.current.id,
+						detail: [],
+                        deliverno:this.disformInline.express
+					}
+					this.currentDetail.forEach(function(ele, index) {
+						let obj = {
+							"id": ele.id,
+							"deliver": ele.deliveryQuantity
+						}
+						deliverParams.detail.push(obj)
+					})
+					let that = this;
+                    var key = localStorage.getItem("key");
+
+					/*
+						确认配送
+						uri：/deliver/ensure
+					 */
+
+					axios({
+						method: 'post',
+						url: host+'/deliver/send',
+						data: JSON.stringify(deliverParams),
+                        headers: {
+                            'key': key,
+                            "Content-Type": "application/json"
+                        }
+					}).then(function(response) {
+						if (response) {
+							that.dialogFormVisible = false;
+							let index = that.tableData.indexOf(that.current);
+							console.log(index);
+							console.log(deliverParams)
+							that.successTips();
+							that.tableData.splice(index, 1);
+							that.flag = true;
+						}
+					}).catch(function(error) {
+						console.log(error);
+					});
+				}
+			}
+		})
+	</script>
+</html>

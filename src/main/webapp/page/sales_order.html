@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title data-id="sales_order">订单录入</title>
+		<link rel="stylesheet" href="../lib/layui-v2.4.5/layui/css/layui.css">
+		<link rel="stylesheet" href="../css/sales_order.css">
+		<style type="text/css">
+			.el-button--primary {
+				color: #fff;
+				background-color: #009688;
+				border-color: #009688;
+			}
+
+			.el-button--primary:focus,
+			.el-button--primary:hover {
+				opacity: .8;
+				filter: alpha(opacity=80);
+				color: #fff;
+				background-color: #009688;
+				border-color: #009688;
+			}
+
+			.layui-layer-mtitle {
+				text-align: center;
+				font-size: 18px;
+				padding: 24px 0;
+			}
+
+			.layui-form-label.small-label {
+				width: 40px;
+			}
+
+			#mylayer .layui-input-block {
+				margin-left: 72px;
+				min-height: 36px;
+			}
+
+			#mylayer .layui-form {
+				width: 410px;
+				padding: 0 40px 20px 10px;
+
+			}
+		</style>
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo">
+					<h3>订单管理系统</h3>
+				</div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<div class="layui-side layui-bg-black">
+					<div class="layui-side-scroll">
+						<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+						<ul class="layui-nav layui-nav-tree" lay-filter="test" id="pageConainer">
+
+						</ul>
+					</div>
+				</div>
+
+				<div class="layui-body container">
+					<!-- 内容主体区域 -->
+					<div style="padding: 15px;width: 746px;">
+						<div class="layui-form" action="">
+							<!-- -->
+							<div class="layui-form-item">
+								<label class="layui-form-label">客户名</label>
+								<div class="layui-input-block">
+									<select name="customerid" lay-verify="required" id="customer" lay-search>
+									</select>
+								</div>
+							</div>
+
+							<div class="layui-form-item">
+								<label class="layui-form-label">时间</label>
+								<div class="layui-input-block">
+									<input type="text" id="optionTime" name="optionTime" placeholder="yyyy-MM-dd(不填代表当前时间)" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+
+							<div class="layui-form-item">
+								<label class="layui-form-label"></label>
+								<div class="order-tag">
+									<ul>
+										<!-- <li><span class="tag-list-item">足托50个，单价75元</span><i class="layui-icon layui-icon-close"></i></li> -->
+									</ul>
+								</div>
+							</div>
+							<div class="layui-form-item addBtn">
+								<label class="layui-form-label"></label>
+								<button type="button" class="layui-btn">
+									<i class="layui-icon">&#xe608;</i> 添加产品
+								</button>
+							</div>
+							<div class="layui-form-item confirmBtn" style="display: none;">
+								<div class="layui-input-block">
+									<button class="layui-btn">确定添加订单</button>
+								</div>
+							</div>
+
+							<!--  -->
+							<div id="mylayer">
+								<div class="layui-layer-mtitle">订单录入</div>
+								<form class="layui-form">
+									<div class="layui-form-item">
+										<label class="layui-form-label small-label">名称</label>
+										<div class="layui-input-block">
+											<input type="text" name="name" required lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label small-label">型号</label>
+										<div class="layui-input-block">
+											<input type="text" name="model" placeholder="请输入型号" autocomplete="off" class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label small-label">属性</label>
+										<div class="layui-input-block">
+											<input type="radio" name="attr" value="定制" title="定制">
+											<div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i>
+												<div>定制</div>
+											</div>
+											<input type="radio" name="attr" value="成品" title="成品" checked="">
+											<div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon layui-anim-scaleSpring"></i>
+												<div>成品</div>
+											</div>
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label small-label">单价</label>
+										<div class="layui-input-block">
+											<input type="text" name="perprice" required lay-verify="required" placeholder="请输入单价" autocomplete="off"
+											 class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label small-label">数量</label>
+										<div class="layui-input-block">
+											<input type="number" name="count" required lay-verify="required" placeholder="请输入数量" autocomplete="off"
+											 class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item layui-form-text">
+										<label class="layui-form-label small-label">备注</label>
+										<div class="layui-input-block">
+											<textarea name="mess" placeholder="请输入内容" class="layui-textarea"></textarea>
+										</div>
+									</div>
+
+									<div class="layui-form-item">
+										<div class="layui-input-block">
+											<button class="layui-btn" lay-submit lay-filter="formDemo">确定</button>
+											<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+											<button type="reset" class="layui-btn layui-btn-primary cancel">取消</button>
+										</div>
+									</div>
+								</form>
+							</div>
+
+							<!--  -->
+						</div>
+					</div>
+				</div>
+				<div class="layui-footer">
+				</div>
+			</div>
+			<script src="../lib/layui-v2.4.5/layui/layui.js"></script>
+			<script type="text/javascript" src="../js/page.js"></script>
+			<script type="text/javascript">
+                // var host="http://www.senderkong.com:8080/ops";
+                var host="http://127.0.0.1:8080";
+				layui.use(['form', "jquery", "layer", "element"], function() {
+					let element = layui.element;
+					let form = layui.form;
+					let $ = layui.$;
+					let params ={
+						customerid: null,
+						optionTime:"",
+						product: []
+					};
+					getCustomer();
+					$(".addBtn").click(function() {
+						layer.open({
+							type: 1,
+							shade: 0,
+							maxWidth: 600,
+							btnAlign: 'l',
+							fixed: true,
+							title: false,
+							content: $('#mylayer'),
+							move: $(".layui-layer-mtitle"),
+							yes: function(index, layero) {
+								return false;
+							}
+						});
+						$(".confirmBtn").show();
+					})
+
+					$(".cancel").click(function() {
+						layer.closeAll('page');
+					});
+
+					$(".confirmBtn").on('click', function() {
+                        var key=localStorage.getItem("key");
+						layer.closeAll('page');
+						params.customerid = $("#customer").val();
+                        params.optionTime = $("#optionTime").val();
+						var tmp = JSON.stringify(params)
+						console.log("添加产品为", params);
+						$.ajax({
+							url: host+"/order/input",
+							dataType: 'json', //服务器返回json格式数据
+                            headers:{
+                                "Content-Type": "application/json",
+								"key":key
+                            },
+							type: 'POST', //HTTP请求类型
+							data:tmp,
+							success: function(data) {
+								console.log(data)
+                                params.product=[]
+								if (data&&data.data == "录入成功") {
+									$(".order-tag ul li").remove();
+									$(".confirmBtn").hide();
+                                    alert("添加成功！");
+								}else{
+                                    alert("权限不足！");
+								}
+							},
+							error: function(xhr, type, errorThrown) {
+								if (xhr) {
+									console.log("fail",xhr)
+									alert("添加失败！");
+								}
+
+							}
+						});
+					});
+					form.on('submit(formDemo)', function(data) {
+						creatTags(data.field);
+                        console.log(data.field);
+						params.product.push(data.field);
+						return false;
+					});
+
+					function getCustomer() {
+						$.ajax({
+							url: host+"/customer/simple",
+							dataType: 'json', //服务器返回json格式数据
+							type: 'get', //HTTP请求类型
+							success: function(data) {
+								console.log(data)
+								let str = "";
+								for (var i = 0; i < data.customer.length; i++) {
+									str += '<option value="' + data.customer[i].id + '" customerid ="' + data.customer[i].id + '">' + data.customer[
+										i].name + '</option>'
+								}
+								$("#customer").html(str)
+								form.render();
+							},
+							error: function(xhr, type, errorThrown) {
+
+							}
+						});
+					}
+
+					function creatTags(item) {
+						let obj = $(".order-tag ul");
+						let str = '<li><span class="tag-list-item">' + item.name + item.count + '个，单价' + item.perprice +
+							'元</span><i class="layui-icon layui-icon-close"></i></li>';
+						obj.append(str)
+					}! function deletTags() {
+						$("ul").on("click", ".layui-icon-close", function(event) {
+							var $tar = $(event.target);
+							if ($tar[0].localName == "li") {
+								var i = $tar.parent().children().index($tar);
+							} else {
+								var i = $tar.parents('li').index();
+							}
+							$(this).parents("li").remove();
+							params.product.splice(i, 1)
+						})
+					}();
+
+					function clearInput() {
+						$(".cancel").click();
+					}
+				});
+			</script>
+	</body>
+</html>

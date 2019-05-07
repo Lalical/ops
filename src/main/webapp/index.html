@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>登录</title>
+		<link rel="stylesheet" href="lib/layui-v2.4.5/layui/css/layui.css">
+		<style>
+			body{
+				background: #F1F1F1;
+			}
+			.card{
+				width: 400px;
+				height: 240px;
+				border:1px solid #f1f1f1;
+				background: #fff;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left:-200px;
+				margin-top:-200px;
+				border-radius: 6px;
+			}
+			.layui-btn{
+				width: 100%;
+			}
+			.title{
+				text-align: center;
+				margin-bottom: 20px;
+				margin-top: 15px;
+			}
+			.layui-form-item{
+				margin-left: 40px;
+			}
+			    
+		</style>
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="card">
+				<!-- 内容主体区域 -->
+				<div style="padding: 15px;" style="height: 200px;">
+					<h2 class="title">用户验证</h2>
+					<form class="layui-form layui-form-pane" action="">
+						<div class="layui-form-item">
+							<label class="layui-form-label">密码框</label>
+							<div class="layui-input-inline">
+								<input type="password" name="password" required="" lay-verify="required" placeholder="请输入密码" autocomplete="off"
+								 class="layui-input" id="password">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<button class="layui-btn" lay-submit="" lay-filter="formDemo" style="width: 91%;">立即登录</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<script src="lib/layui-v2.4.5/layui/layui.js"></script>
+			<script>
+                // var host="http://www.senderkong.com:8080/ops";
+                var host="http://127.0.0.1:8080";
+				layui.use(['form', "jquery", "element"], function() {
+					var element = layui.element;
+					var $ = layui.$;
+					var form = layui.form;
+					form.on('submit(formDemo)', function(data) {
+						var password = data.field.password;
+								$.ajax({
+									url: host+"/right",
+									dataType: 'json', //服务器返回json格式数据
+									headers:{
+                                        "Content-Type": "application/json"
+									},
+									type: 'post', //HTTP请求类型
+									data: password,
+									success: function(data) {
+										console.log(data);
+										localStorage.setItem("pageData",JSON.stringify(data));
+											localStorage.setItem("key",password);
+										window.location.href=data[0].url;
+									},
+									error: function(xhr, type, errorThrown) {}
+								});
+						return false;
+					});
+				});
+			</script>
+	</body>
+</html>

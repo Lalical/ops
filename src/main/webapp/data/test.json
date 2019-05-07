@@ -1,0 +1,22 @@
+[{
+		"id": "sales_order",
+		"name": "订单录入",
+		"url": "page/sales_order.html"
+	},{
+		"id": "financial_update",
+		"name": "财务更新",
+		"url": "page/financial_update.html"
+	},{
+		"id": "distribution_renewal",
+		"name": "配送更新",
+		"url": "page/distribution_renewal.html"
+	},{
+		"id": "customer_information",
+		"name": "客户信息录入",
+		"url": "page/customer_information.html"
+	},{
+		"id": "state_query",
+		"name": "状态查询",
+		"url": "page/state_query.html"
+	}
+]

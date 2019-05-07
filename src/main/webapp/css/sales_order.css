@@ -1,0 +1,59 @@
+  	.layui-btn{
+		border-radius: 4px;
+	}
+	.layui-form-select dl dd.layui-this {
+    background-color: #f5f7fa;
+    color: #606266;
+}
+	.container{
+		min-height: 800px;
+	}
+	#mylayer{
+	
+		display: none;
+	}
+	.order-tag{
+		width: 600px;
+		height: 120px;
+		background: rgba(249, 249, 252, 0.5);
+		border-radius: 5px;
+		display: inline-block;
+		padding: 15px;
+		overflow-y: auto;
+	}
+	.order-tag ul li{
+		background-color: rgba(64,158,255,.1);
+		display: inline-block;
+		padding: 0 10px;
+		height: 32px;
+		line-height: 30px;
+		font-size: 12px;
+		color: #409eff;
+		border-radius: 4px;
+		box-sizing: border-box;
+		border: 1px solid rgba(64,158,255,.2);
+		white-space: nowrap;
+		margin-right: 12px;
+		margin-bottom: 10px;
+	}
+	.order-tag ul li span{
+
+		display: inline-block;
+		margin-right:10px;
+	
+	}
+	.order-tag ul li .layui-icon-close{
+		    border-radius: 50%;
+			text-align: center;
+			position: relative;
+			cursor: pointer;
+			line-height: 16px;
+			vertical-align: middle;
+			top: -1px;
+			right: -5px;
+		
+	}
+	.layui-icon-close:hover{
+		background-color:#409eff;
+		color: #fff;
+	}

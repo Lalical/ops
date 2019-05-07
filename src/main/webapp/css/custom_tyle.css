@@ -1,0 +1,11 @@
+.el-button--primary {
+    color: #fff;
+    background-color: #393D49;
+    border-color: #393D49;
+}
+.el-button--primary:focus, .el-button--primary:hover {
+    background: #61646d;
+    border-color: #61646d;
+    color: #fff;
+	/* "tableData.filter(data => !orderSearch || data.customername.toLowerCase().includes(orderSearch.toLowerCase()))" */
+}
