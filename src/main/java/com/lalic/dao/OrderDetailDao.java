@@ -30,4 +30,7 @@ public interface OrderDetailDao
     @Query(value = "SELECT count(*) FROM orderdetail WHERE orderid=:orderid", nativeQuery = true)
     int countOrderDetail(@Param(value = "orderid") String orderid);
 
+    @Query(value = "DELETE FROM orderdetail WHERE `orderid`=:orderid", nativeQuery = true)
+    @Modifying
+    void deleteOne(@Param(value = "orderid")String orderid);
 }

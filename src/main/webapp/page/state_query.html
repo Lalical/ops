@@ -131,6 +131,11 @@
 												<el-button size="mini" @click="handleEdit(scope.$index, scope.row)">订单详情</el-button>
 											</template>
 										</el-table-column>
+										<el-table-column align="right">
+											<template slot-scope="scope" prop="isDel">
+												<el-button size="mini" @click="handleIsDel(scope.$index, scope.row)">删除</el-button>
+											</template>
+										</el-table-column>
 									</el-table>
 								</template>
 							</el-row>
@@ -154,6 +159,16 @@
 									<div style="margin:10px"><span>单号：</span>{{express}}</div>
 									<div slot="footer" class="dialog-footer">
 										<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+									</div>
+								</el-dialog>
+							</el-row>
+							<el-row>
+								<el-dialog title="是否删除" :visible.sync="isDelVisible" center width="40%" :modal-append-to-body='false'
+										   :modal="false" top="22vh">
+									<div style="margin:10px"><span>确定删除该项?</span></div>
+									<div slot="footer" class="dialog-footer">
+										<el-button type="primary" @click="delItem();isDelVisible = false">确认</el-button>
+										<el-button type="primary" @click="isDelVisible = false">取消</el-button>
 									</div>
 								</el-dialog>
 							</el-row>
@@ -215,8 +230,11 @@
 					details_tableData:null,
 					dialogTableVisible: false,
 					dialogFormVisible: false,
+                    isDelVisible:false,
 					modal: false,
-					formLabelWidth: '90px'
+					formLabelWidth: '90px',
+                    current: null,
+                    currentSearch: ''
 				}
 			},
 			computed: {
@@ -233,6 +251,7 @@
                     this.page.currpage = val;
                 },
 				search() {
+                    this.currentSearch="search";
                     let that = this;
 					if (this.date1 && this.date2) {
 						let startTime = that.date1.getTime();
@@ -266,6 +285,7 @@
 					}
 				},
                 qiucksearch(){
+                    this.currentSearch="qiucksearch";
                         let that = this;
                         let cname = that.cname;
                         var key = localStorage.getItem("key");
@@ -294,8 +314,41 @@
 					this.details_tableData = row.detail;
 					
 				},
+                handleIsDel(index, row) {
+                    this.isDelVisible = true;
+                    console.log(row);
+                    this.current = row
+                },
 				handleDelete(index, row) {
 					console.log(index, row);
+				},
+				delItem(){
+                    console.log("删！ "+this.current.id);
+                    let that=this
+                    var orderid=this.current.id
+                    var key = localStorage.getItem("key");
+                    axios({
+                        method: 'post',
+                        url: host+'/order/del',
+                        data: {
+                            orderid:orderid
+                        },
+                        headers: {
+                            'key': key,
+                            "Content-Type": "application/json"
+                        }
+                    }).then(function(response) {
+                        console.log(that.currentSearch);
+                        if(that.currentSearch==="qiucksearch")
+						{
+                            that.qiucksearch()
+						}else if(that.currentSearch==="search"){
+                            that.search()
+						}
+                        console.log("删除成功");
+                    }).catch(function(error) {
+                        console.log(error);
+                    });
 				},
                 noCondition() {
                     this.$message({

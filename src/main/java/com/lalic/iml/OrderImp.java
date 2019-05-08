@@ -6,7 +6,9 @@ import com.lalic.dao.OrderDetailDao;
 import com.lalic.entity.CustomerTable;
 import com.lalic.entity.OrderDetailTable;
 import com.lalic.entity.OrderTable;
+import com.lalic.model.BaseResponse;
 import com.lalic.model.FinanceSearchReps;
+import com.lalic.model.OrderDelReq;
 import com.lalic.model.OrderInputReq;
 import com.lalic.model.OrderSearchReq;
 import com.lalic.service.OrderService;
@@ -167,6 +169,20 @@ public class OrderImp implements OrderService {
         items.sort(Comparator.comparing(FinanceSearchReps.Item::getTime));
         ret.setData(items);
         return ret;
+    }
+
+    @Override
+    @Transactional
+    public BaseResponse del(OrderDelReq req) {
+        String orderid = req.getOrderid();
+        if(orderid!=null)
+        {
+            dao.deleteById(orderid);
+            orderDetailDao.deleteOne(orderid);
+        }
+        dao.flush();
+        orderDetailDao.flush();
+        return null;
     }
 
     private void saveDetail(String id, List<OrderInputReq.Product> product) {

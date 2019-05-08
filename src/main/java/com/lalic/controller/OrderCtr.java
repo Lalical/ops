@@ -4,6 +4,7 @@ import com.lalic.dao.RightDao;
 import com.lalic.entity.RightTable;
 import com.lalic.model.BaseResponse;
 import com.lalic.model.FinanceSearchReps;
+import com.lalic.model.OrderDelReq;
 import com.lalic.model.OrderInputReq;
 import com.lalic.model.OrderSearchReq;
 import com.lalic.service.OrderService;
@@ -60,6 +61,20 @@ public class OrderCtr {
             }
         }
         return service.simpleSearch(req);
+    }
+
+    @RequestMapping(value = "/del", method = RequestMethod.POST)
+    public BaseResponse del(@RequestBody OrderDelReq req, @RequestHeader String key) {
+        if (key == null) {
+            return new BaseResponse();
+        } else {
+            RightTable right = rightDao.getRight(key);
+            if (right == null) return new BaseResponse();
+            else if (!right.getType().contains("状态查询")) {
+                return new BaseResponse();
+            }
+        }
+        return service.del(req);
     }
 
     @RequestMapping(value = "/quicksearch", method = RequestMethod.GET)
