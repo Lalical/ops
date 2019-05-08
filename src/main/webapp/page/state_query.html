@@ -346,7 +346,9 @@
                             that.search()
 						}
                         console.log("删除成功");
+                        that.delSuccess()
                     }).catch(function(error) {
+                        that.delFail()
                         console.log(error);
                     });
 				},
@@ -354,6 +356,18 @@
                     this.$message({
                         message: '条件不足',
                         type: 'info'
+                    });
+                },
+                delSuccess() {
+                    this.$message({
+                        message: '删除成功',
+                        type: 'info'
+                    });
+                },
+                delFail() {
+                    this.$message({
+                        message: '删除失败',
+                        type: 'error'
                     });
                 },
                 dataEmptyTips() {
