@@ -1,92 +1,128 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-		<title>表单打印</title>
-		<link rel="stylesheet" href="../lib/element/css/index.css">
-		<style type="text/css">
-			body {
-				line-height: 24px;
-				font: 14px Helvetica Neue, Helvetica, PingFang SC, Tahoma, Arial, sans-serif;
-			}
-			#app {
-				width: 960px;
-				padding: 20px;
-				background: #F1F1F1;
-				border-radius: 6px;
-				margin: 0 auto;
-			}
-			#app table {
-				width: 100%;
-				border-collapse: collapse;
-			}
-			#app table td {
-				padding: 6px 10px;
-				text-align: center;
-			}
-		</style>
-	</head>
-	<body class="layui-layout-body">
-		<div id="app">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>表单打印</title>
+	<link rel="stylesheet" href="../lib/element/css/index.css">
+	<style type="text/css">
+		body {
+			line-height: 24px;
+			font: 14px Helvetica Neue, Helvetica, PingFang SC, Tahoma, Arial, sans-serif;
+		}
 
-			<table border="1px solid #ccc" cellspacing="0" cellpadding="0" style="word-break:break-all; word-wrap:break-all">
-				<thead>
-					<tr>
-						<td colspan="5" style="font-size: 24px;font-weight: bold;text-align: center;">销售清单</td>
-					</tr>
-					<tr>
-						<td colspan="5" style="text-align: center;">公司地址：西安市长安区鸣犊镇工业园2309</td>
-					</tr>
-					<tr>
-						<td colspan="3">联系电话：13468813501 029-61858007</td>
-						<td>单号</td>
-						<td>{{tableData.id}}</td>
-					</tr>
-					<tr>
-						<td>收货单位</td>
-						<td colspan="2">{{tableData.customername}}</td>
-						<td>时间</td>
-						<td>{{tableData.time}}</td>
-					</tr>
-					<tr>
-						<td width="8%">序号</td>
-						<td width="40%">名称</td>
-						<td width="8%">型号</td>
-						<td width="10%">数量</td>
-						<td >备注</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(item, key) in tableData.detail" >
-						<td width="8%">{{key+1}}</td>
-						<td width="40%">{{item.name}}</td>
-						<td width="8%">{{item.model}}</td>
-						<td width="10%">{{item.deliveryQuantity}}</td>
-						<td width=34% >{{item.mess}}</td>
-					</tr>
-					<tr>
-						<td colspan="5">经手人：刘前涛</td>
-					</tr>
-				</tbody>
-			</table>
+		#app {
+			width: 960px;
+			padding: 20px;
+			background: #F1F1F1;
+			border-radius: 6px;
+			margin: 0 auto;
+			display: flex;
+			display: -moz-box;
+			display: -ms-flexbox;
+			display: -webkit-flex;
+		}
+
+		#app table {
+			width: 82%;
+			border-collapse: collapse;
+		}
+
+		#app table td {
+			padding: 6px 10px;
+			text-align: center;
+		}
+		.img-container{
+			padding-left: 20px;
+		}
+		.imgbox {
+			width: 150px;
+		}
+		.imgbox img{
+			width: 150px;
+			height: 150px;
+			display: block;
+		}
+		.imgbox .title{
+			display: inline-block;
+			width: 150px;
+			text-align: center;
+			padding-bottom: 5px;
+			padding-top: 5px;
+		}
+	</style>
+</head>
+<body class="layui-layout-body">
+<div id="app">
+
+	<table border="1px solid #ccc" cellspacing="0" cellpadding="0" style="word-break:break-all; word-wrap:break-all">
+		<thead>
+		<tr>
+			<td colspan="5" style="font-size: 24px;font-weight: bold;text-align: center;">销售清单</td>
+		</tr>
+		<tr>
+			<td colspan="5" style="text-align: center;">公司地址：西安市长安区鸣犊镇工业园2309</td>
+		</tr>
+		<tr>
+			<td colspan="3">联系电话：13468813501 029-61858007</td>
+			<td>单号</td>
+			<td style="font-size: 22px;">{{tableData.id}}</td>
+		</tr>
+		<tr>
+			<td>收货单位</td>
+			<td colspan="2" style="font-size: 22px;">{{tableData.customername}}</td>
+			<td>时间</td>
+			<td style="font-size: 22px;">{{tableData.time}}</td>
+		</tr>
+		<tr>
+			<td width="10%">序号</td>
+			<td width="35%">名称</td>
+			<td width="8%">型号</td>
+			<td width="10%">数量</td>
+			<td width="37%">备注</td>
+		</tr>
+		</thead>
+		<tbody>
+		<tr v-for="(item, key) in tableData.detail">
+			<td width="10%">{{key+1}}</td>
+			<td width="35%" style="font-size: 22px;">{{item.name}}</td>
+			<td width="8%" style="font-size: 22px;">{{item.model}}</td>
+			<td width="10%" style="font-size: 22px;">{{item.deliveryQuantity}}</td>
+			<td width=37% style="font-size: 22px;">{{item.mess}}</td>
+		</tr>
+		<tr>
+			<td colspan="5">经手人：刘前涛</td>
+		</tr>
+		</tbody>
+	</table>
+	<div class="img-container">
+		<div class="imgbox">
+			<img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1557235462570&di=bd2eb792e3a63831bbaad5f5e2b45196&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F16%2F20%2F19300542638489152776204434975_950.jpg" alt="微信" class="img">
+			<span class="title" >微信支付</span>
 		</div>
-		<script src="../js/vue.js"></script>
-		<!--<script src="../js/index.js"></script>-->
-		<script>
-			new Vue({
-				el: "#app",
-				data: function() {
-					return {
-						tableData: [],
-					}
-				},
-				created() {
-					var data = JSON.parse(localStorage.getItem("printOrder") || '[]')[0]
-					console.log(data)
-					this.tableData = data;
-				}
-			})
-		</script>
-	</body>
+		<div class="imgbox">
+			<img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1557235462570&di=bd2eb792e3a63831bbaad5f5e2b45196&imgtype=0&src=http%3A%2F%2Fa2.att.hudong.com%2F16%2F20%2F19300542638489152776204434975_950.jpg" alt="支付宝" class="img">
+			<span class="title">支付宝支付</span>
+		</div>
+	</div>
+
+</div>
+<script src="../js/vue.js"></script>
+<!--<script src="../js/index.js"></script>-->
+<script>
+    new Vue({
+        el: "#app",
+        data: function() {
+            return {
+                tableData: [],
+            }
+        },
+        created() {
+            var data = JSON.parse(localStorage.getItem("printOrder") || '[]')[0]
+            console.log(data)
+            this.tableData = data;
+        }
+    })
+</script>
+</body>
 </html>

@@ -16,15 +16,15 @@ public class RightTable {
     @Column(name = "type")
     private String type;
 
-    @Column(name = "from")
-    private String from;
+    @Column(name = "belong")
+    private String belong;
 
-    public String getFrom() {
-        return from;
+    public String getBelong() {
+        return belong;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setBelong(String belong) {
+        this.belong = belong;
     }
 
     public String getKey() {

@@ -77,7 +77,7 @@ public class OrderImp implements OrderService {
         item.setIspay("未支付");
         item.setIsproensure("未确认");
         item.setIsdeliver("未配送");
-        item.setFrom(key);
+        item.setFromwho(key);
         dao.save(item);
 
         saveDetail(id, input.getProduct());
@@ -184,14 +184,14 @@ public class OrderImp implements OrderService {
         }
     }
 
-    private long calMoney(OrderInputReq input) {
+    private Double calMoney(OrderInputReq input) {
 
         List<OrderInputReq.Product> product = input.getProduct();
 
-        long money = 0;
+        Double money = 0.0;
 
         for (OrderInputReq.Product item : product) {
-            Integer perprice = Integer.valueOf(item.getPerprice());
+            Double perprice = Double.valueOf(item.getPerprice());
             Integer count = Integer.valueOf(item.getCount());
             money += perprice * count;
         }

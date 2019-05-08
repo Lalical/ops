@@ -46,15 +46,15 @@ public class OrderTable {
     @Column(name = "deno")
     private String deno;
 
-    @Column(name = "from")
-    private String from;
+    @Column(name = "fromwho")
+    private String fromwho;
 
-    public String getFrom() {
-        return from;
+    public String getFromwho() {
+        return fromwho;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setFromwho(String fromwho) {
+        this.fromwho = fromwho;
     }
 
     public OrderTable() {
